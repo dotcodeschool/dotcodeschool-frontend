@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+public
+lib/types/contentful
+next-env.d.ts
+next.config.mjs
+*.config.js
+*.config.mjs

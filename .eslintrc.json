@@ -1,21 +1,382 @@
 {
-  "parser": "@typescript-eslint/parser",
   "extends": [
+    "plugin:react/recommended",
     "next",
     "next/core-web-vitals",
-    "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended"
+    "plugin:import/typescript",
+    "plugin:prettier/recommended",
+    "plugin:jsdoc/recommended-typescript"
   ],
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    }
-  },
   "globals": {
     "React": "readonly"
   },
+  "overrides": [
+    {
+      "files": ["**/api/**/*.ts"],
+      "rules": {
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "filter": {
+              "match": true,
+              "regex": "^(GET|POST|PUT|DELETE|PATCH)$"
+            },
+            "format": ["UPPER_CASE"],
+            "selector": "variable"
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "**/{page,layout,metadata,index}.{ts,tsx}",
+        "**/*.{page,layout}.tsx"
+      ],
+      "rules": {
+        "filename-rules/match": "off",
+        "import/no-default-export": "off"
+      }
+    }
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "project": "./tsconfig.json",
+    "sourceType": "module",
+    "tsconfigRootDir": "."
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "@stylistic/ts",
+    "react",
+    "prettier",
+    "eslint-plugin-tsdoc",
+    "jsdoc",
+    "simple-import-sort",
+    "no-secrets",
+    "filename-rules",
+    "prefer-arrow-functions"
+  ],
   "rules": {
-    "no-unused-vars": "warn"
+    "no-template-curly-in-string": "error",
+    "prefer-template": "warn",
+    "@typescript-eslint/no-explicit-any": "error",
+    "no-implicit-coercion": "warn",
+    "require-await": "warn",
+    "no-plusplus": ["warn", { "allowForLoopAfterthoughts": true }],
+    "curly": "warn",
+    "object-shorthand": "warn",
+    "@typescript-eslint/consistent-type-assertions": [
+      "error",
+      { "assertionStyle": "never" }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "camelcase": "error",
+    "complexity": ["error", 5],
+    "@typescript-eslint/switch-exhaustiveness-check": "warn",
+    "@typescript-eslint/naming-convention": [
+      "warn",
+      {
+        "selector": "default",
+        "format": ["camelCase"],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "variable",
+        "format": ["PascalCase", "camelCase", "UPPER_CASE"],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "parameter",
+        "format": ["camelCase", "PascalCase"],
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "property",
+        "format": null,
+        "leadingUnderscore": "allow"
+      },
+      {
+        "selector": "typeAlias",
+        "format": ["PascalCase"]
+      },
+      {
+        "selector": "import",
+        "format": null
+      }
+    ],
+    "@typescript-eslint/no-restricted-imports": [
+      "warn",
+      {
+        "name": "react-redux",
+        "importNames": ["useSelector", "useDispatch"],
+        "message": "Use typed hooks `useAppDispatch` and `useAppSelector` instead."
+      }
+    ],
+    "@typescript-eslint/no-shadow": "off",
+    "@typescript-eslint/quotes": "off",
+    "@typescript-eslint/comma-dangle": "off",
+    "react/prefer-stateless-function": "error",
+    "react/button-has-type": "error",
+    "react/jsx-pascal-case": "error",
+    "react/jsx-no-script-url": "error",
+    "react/no-children-prop": "error",
+    "react/no-danger": "error",
+    "react/no-danger-with-children": "error",
+
+    "react/no-unstable-nested-components": ["error", { "allowAsProps": true }],
+    "react/jsx-fragments": "error",
+    "react/destructuring-assignment": [
+      "error",
+      "always",
+      { "destructureInSignature": "always" }
+    ],
+    "react/jsx-no-leaked-render": ["error", { "validStrategies": ["ternary"] }],
+    "react/jsx-max-depth": ["error", { "max": 5 }],
+    "react/jsx-key": [
+      "error",
+      {
+        "checkFragmentShorthand": true,
+        "checkKeyMustBeforeSpread": true,
+        "warnOnDuplicates": true
+      }
+    ],
+    "react/jsx-no-useless-fragment": "warn",
+    "react/jsx-curly-brace-presence": "warn",
+    "react/no-typos": "warn",
+    "react/display-name": "warn",
+    "react/self-closing-comp": "warn",
+    "react/jsx-sort-props": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "react/prop-types": "off",
+
+    "@typescript-eslint/no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true,
+        "allowTernary": true,
+        "enforceForJSX": true
+      }
+    ],
+    "@typescript-eslint/no-floating-promises": [
+      "error",
+      { "ignoreVoid": true, "ignoreIIFE": true }
+    ],
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": {
+          "arguments": false,
+          "attributes": false
+        }
+      }
+    ],
+    "max-len": [
+      "warn",
+      {
+        "code": 50,
+        "tabWidth": 2,
+        "ignoreUrls": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
+      }
+    ],
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn",
+    "@typescript-eslint/no-unnecessary-type-arguments": "warn",
+    "@typescript-eslint/no-unnecessary-condition": "warn",
+    "import/no-duplicates": "error",
+    "jsdoc/require-throws": "error",
+    "jsdoc/check-indentation": "warn",
+    "jsdoc/no-blank-blocks": "warn",
+    "jsdoc/require-asterisk-prefix": "warn",
+    "jsdoc/require-description": "warn",
+    "jsdoc/sort-tags": "warn",
+    "jsdoc/check-syntax": "warn",
+    "jsdoc/tag-lines": ["warn", "never", { "startLines": 1 }],
+    "jsdoc/require-param": ["warn", { "checkDestructuredRoots": false }],
+    "jsdoc/require-jsdoc": [
+      "warn",
+      {
+        "publicOnly": true,
+        "require": {
+          "FunctionDeclaration": true,
+          "FunctionExpression": true,
+          "ArrowFunctionExpression": true,
+          "ClassDeclaration": true,
+          "ClassExpression": true,
+          "MethodDefinition": true
+        },
+        "contexts": [
+          "VariableDeclaration",
+          "TSTypeAliasDeclaration",
+          "TSMethodSignature",
+          "TSInterfaceDeclaration",
+          "TSPropertySignature"
+        ],
+        "enableFixer": false
+      }
+    ],
+    "prefer-arrow-callback": [
+      "warn",
+      {
+        "allowNamedFunctions": true
+      }
+    ],
+    "no-secrets/no-secrets": [
+      "error",
+      { "ignoreContent": "https", "tolerance": 4.2 }
+    ],
+    "filename-rules/match": [
+      2,
+      {
+        ".ts": {
+          "pattern": "camelcase"
+        },
+        ".tsx": { "pattern": "pascalcase", "exceptions": ["page", "layout"] }
+      }
+    ],
+    "jsdoc/check-tag-names": [
+      "warn",
+      { "definedTags": ["remarks", "privateRemarks"] }
+    ],
+    "jsdoc/require-hyphen-before-param-description": "off",
+    "jsdoc/require-returns": "off",
+    "jsdoc/require-returns-check": "off",
+    "jsdoc/check-param-names": ["error", { "checkDestructured": false }],
+
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "caseInsensitive": true,
+          "order": "asc"
+        },
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "max-depth": ["error", 3],
+    "max-lines-per-function": [
+      "error",
+      {
+        "max": 80,
+        "skipBlankLines": true,
+        "skipComments": true
+      }
+    ],
+    "max-params": ["error", 5],
+    "@typescript-eslint/prefer-ts-expect-error": "error",
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": true,
+        "ts-nocheck": true,
+        "ts-check": false,
+        "minimumDescriptionLength": 3
+      }
+    ],
+    "@typescript-eslint/prefer-nullish-coalescing": "error",
+    "@typescript-eslint/restrict-template-expressions": "error",
+    "@typescript-eslint/consistent-indexed-object-style": ["error", "record"],
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "no-alert": "error",
+    "no-console": [
+      "warn",
+      {
+        "allow": [
+          "warn",
+          "error",
+          "info",
+          "dir",
+          "table",
+          "assert",
+          "count",
+          "time",
+          "timeLog",
+          "trace",
+          "groupCollapsed",
+          "groupEnd"
+        ]
+      }
+    ],
+    "@typescript-eslint/no-unnecessary-type-assertion": "error",
+    "no-duplicate-imports": "error",
+    "no-loop-func": "error",
+    "no-nested-ternary": "error",
+    "no-undef": "error",
+    "no-unneeded-ternary": "error",
+    "one-var-declaration-per-line": ["warn", "always"],
+    "operator-assignment": ["warn", "always"],
+    "operator-linebreak": ["warn", "none"],
+    "import/no-default-export": "error",
+    "arrow-body-style": "warn",
+    "@stylistic/ts/padding-line-between-statements": [
+      "warn",
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": [
+          "function",
+          "interface",
+          "type",
+          "try",
+          "throw",
+          "case",
+          "default",
+          "return"
+        ]
+      }
+    ],
+    "padding-line-between-statements": "off",
+    "prefer-arrow-functions/prefer-arrow-functions": [
+      "warn",
+      {
+        "classPropertiesAllowed": true,
+        "disallowPrototype": true,
+        "returnStyle": "unchanged"
+      }
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+
+      { "devDependencies": ["**/*.{test,spec,story,stories}.{ts,tsx}"] }
+    ],
+    "react/function-component-definition": [
+      "warn",
+      { "namedComponents": "arrow-function" }
+    ],
+    "react/no-multi-comp": "error",
+    "require-atomic-updates": "error",
+    "tsdoc/syntax": "warn"
+  },
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    },
+    "react": {
+      "version": "detect"
+    }
   }
 }
