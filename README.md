@@ -19,13 +19,14 @@ Before starting, you'll need to setup the following content models on Contentful
     url, // Short Text
   },
   courseModule: {
-    moduleName, // Short text
+    title, // Short text
     author, // Reference
-    moduleDescription, // Long text
+    description, // Long text
     level, // Short text
     language, // Short text
     sections, // References, many
     slug, // Short text
+    githubUrl, // Short text
   },
   files: {
     title, // Short text
@@ -34,7 +35,7 @@ Before starting, you'll need to setup the following content models on Contentful
     solution, // Media, many files
   },
   lesson: {
-    lessonName, // Short text
+    title, // Short text
     lessonContent, // Long text
     lessonDescription, // Long text
     files, // Reference

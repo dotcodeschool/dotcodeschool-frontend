@@ -18,6 +18,7 @@ import {
   AccordionButton,
   AccordionPanel,
   Tooltip,
+  Progress,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -26,10 +27,11 @@ import {
   CheckIcon,
 } from "@chakra-ui/icons";
 import { MdCode, MdNumbers } from "react-icons/md";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { map } from "lodash";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import ProgressBar from "@/components/lessons-interface/progress-bar";
 
 interface SectionProps {
   courseId: string;
@@ -103,7 +105,7 @@ const Section = ({
 
 interface BottomNavbarProps {
   doesMatch?: boolean;
-  isOpen?: boolean;
+  isOpen: boolean;
   courseId: string;
   lessonId: string;
   chapterId: string;
@@ -136,6 +138,14 @@ const BottomNavbar = ({
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
+
+  const progress = useMemo(() => {
+    const chapterIdNumber = Number(chapterId);
+    if (isOpen) {
+      return chapterIdNumber;
+    }
+    return chapterIdNumber - 1;
+  }, [isOpen, chapterId]);
 
   // TODO: Refactor this to a custom hook
   const saveProgress = useCallback(
@@ -216,129 +226,133 @@ const BottomNavbar = ({
     };
     syncProgress();
   }, [session, saveProgress]);
-
   return (
-    <Box
-      position="fixed"
-      w="100%"
-      bottom={0}
-      left={0}
-      py={4}
-      px={4}
-      bg="gray.900"
-    >
-      <Flex justify="space-between" align="center">
-        <IconButton
-          aria-label="Open navigation drawer"
-          icon={<HamburgerIcon />}
-          onClick={handleDrawerOpen}
-        />
+    <>
+      <Progress value={progress} max={sections.length} colorScheme="green" />;
+      <Box
+        position="fixed"
+        w="100%"
+        bottom={0}
+        left={0}
+        py={4}
+        px={4}
+        bg="gray.900"
+      >
+        <Flex justify="space-between" align="center">
+          <IconButton
+            aria-label="Open navigation drawer"
+            icon={<HamburgerIcon />}
+            onClick={handleDrawerOpen}
+          />
 
-        <Flex gap={2}>
-          {toggleAnswer &&
-            (doesMatch ? (
+          <Flex gap={2}>
+            {toggleAnswer &&
+              (doesMatch ? (
+                <Button
+                  variant="ghost"
+                  colorScheme="green"
+                  cursor="default"
+                  _hover={{ bg: "none" }}
+                >
+                  <CheckIcon fontSize={16} mr={2} />
+                  Correct
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={toggleAnswer}>
+                  {isOpen ? "Hide" : "Show"} Answer
+                </Button>
+              ))}
+            {prev ? (
               <Button
+                as={Link}
+                href={`/courses/${prev}`}
                 variant="ghost"
-                colorScheme="green"
-                cursor="default"
-                _hover={{ bg: "none" }}
+                gap={2}
+                _hover={{ textDecor: "none", color: "green.300" }}
               >
-                <CheckIcon fontSize={16} mr={2} />
-                Correct
+                <ChevronLeftIcon fontSize={24} />
+                <Text display={["none", "block"]}>Back</Text>
               </Button>
             ) : (
-              <Button variant="outline" onClick={toggleAnswer}>
-                {isOpen ? "Hide" : "Show"} Answer
+              ""
+            )}
+            {next ? (
+              <Button
+                as={Link}
+                onClick={() => {
+                  saveProgress(courseId, lessonId, chapterId);
+                }}
+                href={`/courses/${next}`}
+                variant="ghost"
+                gap={2}
+                _hover={{ textDecor: "none", color: "green.300" }}
+              >
+                <Text display={["none", "block"]}>Next</Text>
+                <ChevronRightIcon fontSize={24} />
               </Button>
-            ))}
-          {prev ? (
-            <Button
-              as={Link}
-              href={`/courses/${prev}`}
-              variant="ghost"
-              gap={2}
-              _hover={{ textDecor: "none", color: "green.300" }}
-            >
-              <ChevronLeftIcon fontSize={24} />
-              <Text display={["none", "block"]}>Back</Text>
-            </Button>
-          ) : (
-            ""
-          )}
-          {next ? (
-            <Button
-              as={Link}
-              onClick={() => {
-                saveProgress(courseId, lessonId, chapterId);
-              }}
-              href={`/courses/${next}`}
-              variant="ghost"
-              gap={2}
-              _hover={{ textDecor: "none", color: "green.300" }}
-            >
-              <Text display={["none", "block"]}>Next</Text>
-              <ChevronRightIcon fontSize={24} />
-            </Button>
-          ) : (
-            <Button
-              as={Link}
-              variant="solid"
-              colorScheme="green"
-              px={[4, 8]}
-              mr={4}
-              gap={2}
-              href={`/courses/${courseId}/lesson/${lessonId}/success`}
-              onClick={() => {
-                saveProgress(courseId, lessonId, chapterId);
-              }}
-              _hover={{ textDecor: "none" }}
-            >
-              <Text display={["none", "block"]}>Finish</Text>
-              <CheckIcon fontSize={16} />
-            </Button>
-          )}
+            ) : (
+              <Button
+                as={Link}
+                variant="solid"
+                colorScheme="green"
+                px={[4, 8]}
+                mr={4}
+                gap={2}
+                href={`/courses/${courseId}/lesson/${lessonId}/success`}
+                onClick={() => {
+                  saveProgress(courseId, lessonId, chapterId);
+                }}
+                _hover={{ textDecor: "none" }}
+              >
+                <Text display={["none", "block"]}>Finish</Text>
+                <CheckIcon fontSize={16} />
+              </Button>
+            )}
+          </Flex>
         </Flex>
-      </Flex>
 
-      <Drawer
-        isOpen={isDrawerOpen}
-        placement="left"
-        onClose={handleDrawerClose}
-      >
-        <DrawerOverlay>
-          <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader>Lessons</DrawerHeader>
-            <DrawerBody
-              px={0}
-              sx={{
-                "::-webkit-scrollbar": {
-                  width: "1px",
-                  borderRadius: "8px",
-                },
-                "::-webkit-scrollbar-thumb": {
-                  width: "6px",
-                  borderRadius: "8px",
-                },
-                ":hover::-webkit-scrollbar-thumb": { background: "white.700" },
-              }}
-            >
-              <Accordion defaultIndex={[Number(lessonId) - 1]} allowMultiple>
-                {map(sections, (section, sectionIndex) => (
-                  <Section
-                    key={sectionIndex}
-                    courseId={courseId}
-                    section={{ ...section, sectionIndex }}
-                    current={current}
-                    isActive={sectionIndex === Number(lessonId) - 1}
-                  />
-                ))}
-              </Accordion>
-            </DrawerBody>
-          </DrawerContent>
-        </DrawerOverlay>
-      </Drawer>
-    </Box>
+        <Drawer
+          isOpen={isDrawerOpen}
+          placement="left"
+          onClose={handleDrawerClose}
+        >
+          <DrawerOverlay>
+            <DrawerContent>
+              <DrawerCloseButton />
+              <DrawerHeader>Lessons</DrawerHeader>
+              <DrawerBody
+                px={0}
+                sx={{
+                  "::-webkit-scrollbar": {
+                    width: "1px",
+                    borderRadius: "8px",
+                  },
+                  "::-webkit-scrollbar-thumb": {
+                    width: "6px",
+                    borderRadius: "8px",
+                  },
+                  ":hover::-webkit-scrollbar-thumb": {
+                    background: "white.700",
+                  },
+                }}
+              >
+                <Accordion defaultIndex={[Number(lessonId) - 1]} allowMultiple>
+                  {map(sections, (section, sectionIndex) => (
+                    <Section
+                      key={sectionIndex}
+                      courseId={courseId}
+                      section={{ ...section, sectionIndex }}
+                      current={current}
+                      isActive={sectionIndex === Number(lessonId) - 1}
+                    />
+                  ))}
+                </Accordion>
+              </DrawerBody>
+            </DrawerContent>
+          </DrawerOverlay>
+        </Drawer>
+      </Box>
+    </>
   );
 };
 
